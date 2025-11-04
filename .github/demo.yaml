@@ -1,0 +1,34 @@
+name: practice_repo3
+
+# Triggers the workflow on pushes to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+        
+      - name: 🚀 Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          # The source directory on the runner to sync files from (defaults to the repo root)
+          # The script is the command(s) to run on your EC2 instance
+          script: |
+            # 1. Navigate to your application directory on the EC2 instance
+            cd /var/www/my-app 
+            
+            # 2. Pull the latest changes
+            git pull origin main
+            
+            echo "Deployment complete!"
